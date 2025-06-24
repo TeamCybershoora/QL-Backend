@@ -9,9 +9,14 @@ const cloudinary = require("cloudinary").v2;
 require("dotenv").config();
 
 // Home Page
-async function getIndex(req,res) {
-  res.sendFile(__dirname + "/../index.html");
+async function getIndex(req, res) {
+  res.status(200).json({
+    success: true,
+    message: "Backend is working ✅. Frontend will be deployed separately soon.",
+    frontendURL: null
+  });
 }
+
 
 // Get Users List with Email & Password
 async function listUsers(req,res) {
