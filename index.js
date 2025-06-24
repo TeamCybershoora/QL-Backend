@@ -11,7 +11,7 @@ const PORT = process.env.PORT ;
 connect();
 
 app.use(cors({
-  origin: 'http://localhost:3000',  
+  origin: 'https://ql-frontend.vercel.app',  
   credentials: true,                 
 }));
 
