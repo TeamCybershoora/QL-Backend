@@ -133,7 +133,7 @@ async function addUser(req, res) {
         await user.save();
       }
   
-      res.status(200).send({ success: true, message: 'User saved successfully' , token, user });
+      res.status(200).send({ success: true, message: 'User saved successfully' , user });
     } catch (err) {
       console.error('Signup error:', err);
       res.status(400).send({ success: false, message: 'Something went wrong' });
