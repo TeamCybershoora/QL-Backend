@@ -159,11 +159,7 @@ async function addUser(req, res) {
         return res.status(401).send({ message: 'Invalid credentials' });
       }
   
-      const token = jwt.sign(
-        { id: user._id, email: user.email },
-        process.env.JWT_SECRET,
-        { expiresIn: '7d' }
-      );
+      
   
       user.lastLogin = Date.now();
       await user.save();
