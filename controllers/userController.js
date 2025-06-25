@@ -132,11 +132,6 @@ async function addUser(req, res) {
         user.lastName= req.body.lastName,
         await user.save();
       }
-      const token = jwt.sign(
-        { id: user._id, email: user.email },
-        process.env.JWT_SECRET,
-        { expiresIn: '7d' }
-      );
   
       res.status(200).send({ success: true, message: 'User saved successfully' , token, user });
     } catch (err) {
@@ -159,7 +154,11 @@ async function addUser(req, res) {
         return res.status(401).send({ message: 'Invalid credentials' });
       }
   
-      
+      const token = jwt.sign(
+        { id: user._id, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+      );
   
       user.lastLogin = Date.now();
       await user.save();
