@@ -132,16 +132,13 @@ async function addUser(req, res) {
         user.lastName= req.body.lastName;
         await user.save();
       }
-      console.log("User saved:");
       const token = jwt.sign(
         { id: user._id, email: user.email },
         process.env.JWT_SECRET,
         { expiresIn: '7d' }
       );
-      console.log("Token generated:");
-      res.status(200).send({ success: true, message: 'User saved successfully' , token, user });
+      res.status(200).json({ success: true, message: 'User saved successfully' , token, user });
     } catch (err) {
-      console.error('Signup error:', err);
       res.status(400).send({ success: false, message: 'Something went wrong' });
     }
   }
