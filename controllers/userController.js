@@ -128,8 +128,8 @@ async function addUser(req, res) {
         // User exists → update user
         const hashPassword = bcrypt.hashSync(req.body.password, saltRound);
         user.password = hashPassword;
-        user.firstName= req.body.firstName,
-        user.lastName= req.body.lastName,
+        user.firstName= req.body.firstName;
+        user.lastName= req.body.lastName;
         await user.save();
       }
       console.log("User saved:");
