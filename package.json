@@ -1,17 +1,19 @@
 {
   "name": "api-ql",
   "version": "1.0.0",
-  "main": "index.js", 
+  "main": "index.js",
   "scripts": {
-    "start": "node index.js"        
+    "start": "node index.js"
   },
   "dependencies": {
+    "@react-oauth/google": "^0.12.2",
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.6.1",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
     "mongoose": "^8.14.2",
     "mongoose-timestamps": "^0.0.1",
     "multer": "^1.4.5-lts.2",
