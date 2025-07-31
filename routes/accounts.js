@@ -32,29 +32,49 @@ router.get('/accounts', async (req, res) => {
  */
 router.post('/add/accounts', async (req, res) => {
   try {
-    const { email, category, amount, month } = req.body;
+    const { email, category, amount, month, year } = req.body;
+
+    // Validate required fields
+    if (!email || !category || !amount || !month || !year) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     let accountDoc = await Account.findOne({ user: user._id });
+
     if (!accountDoc) {
+      // Create new document if none exists
       accountDoc = new Account({
         user: user._id,
-        accounts: [{ category, amount, month }]
+        accounts: [{ category, amount, month, year }]
       });
     } else {
-      // Avoid duplicate categories?
-      accountDoc.accounts.push({ category, amount, month });
+      // Optional: prevent exact duplicate (same category + month + year)
+      const alreadyExists = accountDoc.accounts.some(acc =>
+        acc.category === category &&
+        acc.month === month &&
+        acc.year === year
+      );
+
+      if (alreadyExists) {
+        return res.status(409).json({ message: 'Account already exists for this category and month-year' });
+      }
+
+      // Push new entry (same category allowed if month/year differ)
+      accountDoc.accounts.push({ category, amount, month, year });
     }
 
     await accountDoc.save();
     res.status(201).json({ message: 'Account detail added' });
 
   } catch (err) {
-    console.error(err);
+    console.error('Error in /add/accounts:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 /**
  * POST /edit/accounts
@@ -94,7 +114,8 @@ router.post('/edit/accounts', async (req, res) => {
  */
 router.post('/delete/accounts', async (req, res) => {
   try {
-    const { email, category } = req.body;
+    const { email, category, month, year } = req.body;
+
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'User not found' });
 
@@ -102,19 +123,24 @@ router.post('/delete/accounts', async (req, res) => {
     if (!accountDoc) return res.status(404).json({ message: 'No account data found' });
 
     const beforeCount = accountDoc.accounts.length;
-    accountDoc.accounts = accountDoc.accounts.filter(acc => acc.category !== category);
+
+    // Delete only exact match
+    accountDoc.accounts = accountDoc.accounts.filter(acc =>
+      !(acc.category === category && acc.month === month && acc.year === year)
+    );
 
     if (accountDoc.accounts.length === beforeCount) {
-      return res.status(404).json({ message: 'Category not found' });
+      return res.status(404).json({ message: 'No matching entry found' });
     }
 
     await accountDoc.save();
     res.status(200).json({ message: 'Account deleted' });
 
   } catch (err) {
-    console.error(err);
+    console.error('Delete error:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 module.exports = router;
